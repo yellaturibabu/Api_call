@@ -1,0 +1,27 @@
+## Retrieves latest version from specified package in specified artifact feed.
+# Returns result as string (major.minor.patch) in variable with name as specified in parameters.returnVariablename.
+
+parameters:
+  # The name of the Azure DevOps organization.
+  organizationName: raboweb
+  # Name or ID of the project.
+  teamProject: '$(System.TeamProjectId)'
+  # Name or Id of the feed.
+  artifactFeed:
+  # Name of the package.
+  packageName:
+  # Variable in which the result is returned (as string, major.minor.patch).
+  returnVariableName: feedLatestVersion
+
+steps:
+- task: Bash@3
+  name: API-call-template-to-iRIS-library-task
+  displayName: 'API-call-template-to-iRIS-library'
+  inputs:
+    targetType: 'inline'
+    script: |
+      feedLatestVersion=$(curl -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer $(System.AccessToken)" https://feeds.dev.azure.com/{${{ parameters.organizationName }}}/{${{ parameters.teamProject }}}/_apis/packaging/Feeds/{${{ parameters.artifactFeed }}}/Packages?packageNameQuery={${{ parameters.packageName }}} | jq '.value | .[0].versions | .[0].version')
+      feedLatestVersion=${feedLatestVersion:1: -1}
+      echo "Latest Version is $feedLatestVersion"
+      echo "##vso[task.setvariable variable=${{ parameters.returnVariableName }};isOutput=true]$feedLatestVersion"
+      echo "##vso[task.setvariable variable=${{ parameters.returnVariableName }}]$feedLatestVersion"
