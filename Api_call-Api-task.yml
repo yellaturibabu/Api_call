@@ -18,7 +18,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      feedLatestVersion=$(curl -H "Accept: ${{parameters.Accept}}" -H "Content-Type: ${{parameters.Content-Type}}" -H "Authorization: Bearer ${{parameters.Authorization}}" ${{ parameters.url }})
+      LatestVersion=$(curl -H "Accept: ${{parameters.Accept}}" -H "Content-Type: ${{parameters.Content-Type}}" -H "Authorization: Bearer ${{parameters.Authorization}}" ${{ parameters.url }})
       echo "Latest Version is $LatestVersion"
-      echo "##vso[task.setvariable variable=${{ parameters.returnVariableName }};isOutput=true]$feedLatestVersion"
-      echo "##vso[task.setvariable variable=${{ parameters.returnVariableName }}]$feedLatestVersion"
+      echo "##vso[task.setvariable variable=${{ parameters.returnVariableName }};isOutput=true]$LatestVersion"
+      echo "##vso[task.setvariable variable=${{ parameters.returnVariableName }}]$LatestVersion"
