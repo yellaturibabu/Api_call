@@ -1,27 +1,24 @@
-## Retrieves latest version from specified package in specified artifact feed.
+# Retrieves latest version from specified package in specified artifact feed.
 # Returns result as string (major.minor.patch) in variable with name as specified in parameters.returnVariablename.
 
 parameters:
-  # The name of the Azure DevOps organization.
-  organizationName: raboweb
-  # Name or ID of the project.
-  teamProject: '$(System.TeamProjectId)'
-  # Name or Id of the feed.
-  artifactFeed:
-  # Name of the package.
-  packageName:
-  # Variable in which the result is returned (as string, major.minor.patch).
-  returnVariableName: feedLatestVersion
+- name: url 
+  type: string
+- name: 'headers'     
+  type: object
+- name: 'returnVariableName'
+  type: string
+  default: 'LatestVersion'
+
 
 steps:
 - task: Bash@3
-  name: API-call-template-to-iRIS-library-task
-  displayName: 'API-call-template-to-iRIS-library'
+  name: Genral_api_call_to_get_version_task
+  displayName: 'Genral api call to get version '
   inputs:
     targetType: 'inline'
     script: |
-      feedLatestVersion=$(curl -H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer $(System.AccessToken)" https://feeds.dev.azure.com/{${{ parameters.organizationName }}}/{${{ parameters.teamProject }}}/_apis/packaging/Feeds/{${{ parameters.artifactFeed }}}/Packages?packageNameQuery={${{ parameters.packageName }}} | jq '.value | .[0].versions | .[0].version')
-      feedLatestVersion=${feedLatestVersion:1: -1}
-      echo "Latest Version is $feedLatestVersion"
+      feedLatestVersion=$(curl -H "Accept: ${{parameters.Accept}}" -H "Content-Type: ${{parameters.Content-Type}}" -H "Authorization: Bearer ${{parameters.Authorization}}" ${{ parameters.url }})
+      echo "Latest Version is $LatestVersion"
       echo "##vso[task.setvariable variable=${{ parameters.returnVariableName }};isOutput=true]$feedLatestVersion"
       echo "##vso[task.setvariable variable=${{ parameters.returnVariableName }}]$feedLatestVersion"
